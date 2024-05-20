@@ -1,3 +1,4 @@
+const { HarmBlockThreshold, HarmCategory } = require('@google/generative-ai');
 const { google } = require('googleapis');
 const { Agent, ProxyAgent } = require('undici');
 const { ChatVertexAI } = require('@langchain/google-vertexai');
@@ -732,39 +733,69 @@ class GoogleClient extends BaseClient {
     // logger.debug('GoogleClient doesn\'t use getBuildMessagesOptions');
   }
 
+  // async sendCompletion(payload, opts = {}) {
+  //   const modelName = payload.parameters?.model;
+
+  //   if (modelName && modelName.toLowerCase().includes('gemini')) {
+  //     const safetySettings = [
+  //       {
+  //         category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+  //         threshold:
+  //           process.env.GOOGLE_SAFETY_SEXUALLY_EXPLICIT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  //       },
+  //       {
+  //         category: 'HARM_CATEGORY_HATE_SPEECH',
+  //         threshold: process.env.GOOGLE_SAFETY_HATE_SPEECH || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  //       },
+  //       {
+  //         category: 'HARM_CATEGORY_HARASSMENT',
+  //         threshold: process.env.GOOGLE_SAFETY_HARASSMENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  //       },
+  //       {
+  //         category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+  //         threshold:
+  //           process.env.GOOGLE_SAFETY_DANGEROUS_CONTENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  //       },
+  //     ];
+
+  //     payload.safetySettings = safetySettings;
+  //   }
+
+  //   let reply = '';
+  //   reply = await this.getCompletion(payload, opts);
+  //   return reply.trim();
+  // }
   async sendCompletion(payload, opts = {}) {
-    const modelName = payload.parameters?.model;
+  const modelName = payload.parameters?.model;
 
-    if (modelName && modelName.toLowerCase().includes('gemini')) {
-      const safetySettings = [
-        {
-          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-          threshold:
-            process.env.GOOGLE_SAFETY_SEXUALLY_EXPLICIT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_HATE_SPEECH',
-          threshold: process.env.GOOGLE_SAFETY_HATE_SPEECH || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_HARASSMENT',
-          threshold: process.env.GOOGLE_SAFETY_HARASSMENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-          threshold:
-            process.env.GOOGLE_SAFETY_DANGEROUS_CONTENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-      ];
+  if (modelName && modelName.toLowerCase().includes('gemini')) {
+    const safetySettings = [
+      {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+    ];
 
-      payload.safetySettings = safetySettings;
-    }
-
-    let reply = '';
-    reply = await this.getCompletion(payload, opts);
-    return reply.trim();
+    payload.safetySettings = safetySettings;
   }
 
+  let reply = '';
+  reply = await this.getCompletion(payload, opts);
+  return reply.trim();
+}
+  
   /* TO-DO: Handle tokens with Google tokenization NOTE: these are required */
   static getTokenizer(encoding, isModelName = false, extendSpecialTokens = {}) {
     if (tokenizersCache[encoding]) {
