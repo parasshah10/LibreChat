@@ -1203,6 +1203,7 @@ button {
 
 body,
 html {
+  overflow: hidden !important;
   height: 100%;
 }
 
