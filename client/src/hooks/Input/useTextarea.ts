@@ -61,30 +61,30 @@ export default function useTextarea({
   }, [activePrompt, setActivePrompt, textAreaRef]);
 
   // auto focus to input, when enter a conversation.
-  useEffect(() => {
-    if (!conversationId) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!conversationId) {
+  //     return;
+  //   }
 
-    // Prevents Settings from not showing on new conversation, also prevents showing toneStyle change without jailbreak
-    if (conversationId === 'new' || !jailbreak) {
-      setShowBingToneSetting(false);
-    }
+  //   // Prevents Settings from not showing on new conversation, also prevents showing toneStyle change without jailbreak
+  //   if (conversationId === 'new' || !jailbreak) {
+  //     setShowBingToneSetting(false);
+  //   }
 
-    // if (conversationId !== 'search') {
-    //   textAreaRef.current?.focus();
-    // }
-    // setShowBingToneSetting is a recoil setter, so it doesn't need to be in the dependency array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationId, jailbreak]);
+  //   // if (conversationId !== 'search') {
+  //   //   textAreaRef.current?.focus();
+  //   // }
+  //   // setShowBingToneSetting is a recoil setter, so it doesn't need to be in the dependency array
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [conversationId, jailbreak]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      textAreaRef.current?.focus();
-    }, 100);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     textAreaRef.current?.focus();
+  //   }, 100);
 
-    return () => clearTimeout(timeoutId);
-  }, [isSubmitting, textAreaRef]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [isSubmitting, textAreaRef]);
 
   useEffect(() => {
     if (textAreaRef.current?.value) {
