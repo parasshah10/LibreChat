@@ -71,9 +71,9 @@ export default function useTextarea({
       setShowBingToneSetting(false);
     }
 
-    if (conversationId !== 'search') {
-      textAreaRef.current?.focus();
-    }
+    // if (conversationId !== 'search') {
+    //   textAreaRef.current?.focus();
+    // }
     // setShowBingToneSetting is a recoil setter, so it doesn't need to be in the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId, jailbreak]);
