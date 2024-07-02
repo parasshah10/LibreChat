@@ -766,7 +766,7 @@ class OpenAIClient extends BaseClient {
 
     let title = 'New Chat';
     const convo = `||>User:
-"${truncateText(text)}"
+"${text}"
 ||>Response:
 "${JSON.stringify(truncateText(responseText))}"`;
 
