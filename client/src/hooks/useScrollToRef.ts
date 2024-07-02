@@ -1,90 +1,39 @@
-import { useRecoilValue } from 'recoil';
-import { useLayoutEffect, useState, useRef, useCallback, useEffect } from 'react';
-import type { TMessage } from 'librechat-data-provider';
-import useScrollToRef from '../useScrollToRef';
-import { useChatContext } from '~/Providers';
-import store from '~/store';
+import { RefObject, useCallback } from 'react';
+import throttle from 'lodash/throttle';
 
-export default function useMessageScrolling(messagesTree?: TMessage[] | null) {
-  const autoScroll = useRecoilValue(store.autoScroll);
+type TUseScrollToRef = {
+  targetRef: RefObject<HTMLDivElement>;
+  callback: () => void;
+  smoothCallback: () => void;
+};
 
-  const timeoutIdRef = useRef<NodeJS.Timeout>();
-  const scrollableRef = useRef<HTMLDivElement | null>(null); // New ref to target the scrollable container
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const { conversation, setAbortScroll, isSubmitting, abortScroll } = useChatContext();
-  const { conversationId } = conversation ?? {};
+export default function useScrollToRef({ targetRef, callback, smoothCallback }: TUseScrollToRef) {
+  const logAndScroll = (behavior: 'instant' | 'smooth', callbackFn: () => void) => {
+    // Debugging:
+    console.log(`Scrolling with behavior: ${behavior}, Time: ${new Date().toISOString()}`);
+    targetRef.current?.scrollIntoView({ behavior });
+    callbackFn();
+  };
 
-  const checkIfAtBottom = useCallback(() => {
-    if (!scrollableRef.current) {
-      return;
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const scrollToRef = useCallback(
+    throttle(() => logAndScroll('instant', callback), 250, { leading: true }),
+    [targetRef],
+  );
 
-    const { scrollTop, scrollHeight, clientHeight } = scrollableRef.current; // Using new ref
-    const diff = Math.abs(scrollHeight - scrollTop);
-    const percent = Math.abs(clientHeight - diff) / clientHeight;
-    const hasScrollbar = scrollHeight > clientHeight && percent >= 0.15;
-    setShowScrollButton(hasScrollbar);
-  }, [scrollableRef]); // Added new dependency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const scrollToRefSmooth = useCallback(
+    throttle(() => logAndScroll('smooth', smoothCallback), 750, { leading: true }),
+    [targetRef],
+  );
 
-  useLayoutEffect(() => {
-    const scrollableElement = scrollableRef.current; // Using new ref
-    if (!scrollableElement) {
-      return;
-    }
-    const timeoutId = setTimeout(checkIfAtBottom, 650);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [checkIfAtBottom]);
-
-  const debouncedHandleScroll = useCallback(() => {
-    clearTimeout(timeoutIdRef.current);
-    timeoutIdRef.current = setTimeout(checkIfAtBottom, 100);
-  }, [checkIfAtBottom]);
-
-  const scrollCallback = () => setShowScrollButton(false);
-
-  const { scrollToRef: scrollToBottom, handleSmoothToRef } = useScrollToRef({
-    targetRef: messagesEndRef,
-    callback: scrollCallback,
-    smoothCallback: () => {
-      scrollCallback();
-      setAbortScroll(false);
-    },
-  });
-
-  useEffect(() => {
-    if (!messagesTree) {
-      return;
-    }
-
-    if (isSubmitting && scrollToBottom && !abortScroll) {
-      scrollToBottom();
-    }
-
-    return () => {
-      if (abortScroll) {
-        scrollToBottom && scrollToBottom?.cancel();
-      }
-    };
-  }, [isSubmitting, messagesTree, scrollToBottom, abortScroll]);
-
-  useEffect(() => {
-    if (scrollToBottom && autoScroll && conversationId !== 'new') {
-      scrollToBottom();
-    }
-  }, [autoScroll, conversationId, scrollToBottom]);
+  const handleSmoothToRef: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    scrollToRefSmooth();
+  };
 
   return {
-    conversation,
-    scrollableRef,  // Added to return value
-    messagesEndRef,
-    scrollToBottom,
-    showScrollButton,
+    scrollToRef,
     handleSmoothToRef,
-    debouncedHandleScroll,
   };
 }
-
