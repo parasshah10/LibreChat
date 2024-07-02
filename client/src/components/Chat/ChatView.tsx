@@ -1,3 +1,4 @@
+// client/src/components/Chat/ChatView.tsx
 import { memo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useForm } from 'react-hook-form';
@@ -42,7 +43,7 @@ function ChatView({ index = 0 }: { index?: number }) {
   });
 
   const {
-    scrollableRef, // New scrollable ref
+    scrollableRef,
     messagesEndRef,
     scrollToBottom,
     showScrollButton,
@@ -60,7 +61,7 @@ function ChatView({ index = 0 }: { index?: number }) {
                 <Spinner className="opacity-0" />
               </div>
             ) : messagesTree && messagesTree.length !== 0 ? (
-              <div ref={scrollableRef} className="relative h-full w-full overflow-y-auto">  {/* Applied ref and styles */}
+              <div ref={scrollableRef} className="relative h-full w-full overflow-y-auto">
                 <MessagesView messagesTree={messagesTree} Header={<Header />} />
                 <div ref={messagesEndRef} />
               </div>
