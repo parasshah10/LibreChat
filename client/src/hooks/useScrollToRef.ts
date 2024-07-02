@@ -12,7 +12,7 @@ export default function useScrollToRef({ targetRef, callback, smoothCallback }: 
   // Debugging:
   console.dir(targetRef.current); // This will log the detailed properties of the targetRef
   console.log(`Scrolling with behavior: ${behavior}, Time: ${new Date().toISOString()}`);
-  targetRef.current?.scrollIntoView({ behavior });
+  // targetRef.current?.scrollIntoView({ behavior });
   callbackFn();
 };
 
