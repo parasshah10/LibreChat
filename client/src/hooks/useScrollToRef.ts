@@ -17,6 +17,8 @@ export default function useScrollToRef({ targetRef, callback, smoothCallback }: 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const scrollToRef = useCallback(
+     // Debugging:
+    console.log(`Scrolling with behavior: ${behavior}, Time: ${new Date().toISOString()}`);
     throttle(() => logAndScroll('instant', callback), 250, { leading: true }),
     [targetRef],
   );
