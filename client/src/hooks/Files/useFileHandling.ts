@@ -12,7 +12,7 @@ import {
   defaultAssistantsVersion,
   fileConfig as defaultFileConfig,
 } from 'librechat-data-provider';
-import type { TEndpointsConfig } from 'librechat-data-provider';
+import type { TEndpointsConfig, TError } from 'librechat-data-provider';
 import type { ExtendedFile, FileSetter } from '~/common';
 import { useUploadFileMutation, useGetFileConfig } from '~/data-provider';
 import { useDelayedUploadToast } from './useDelayedUploadToast';
@@ -118,8 +118,7 @@ const useFileHandling = (params?: UseFileHandling) => {
       clearUploadTimer(file_id as string);
       deleteFileById(file_id as string);
       setError(
-        (error as { response: { data: { message?: string } } })?.response?.data?.message ??
-          'An error occurred while uploading the file.',
+        (error as TError)?.response?.data?.message ?? 'An error occurred while uploading the file.',
       );
     },
   });
@@ -163,6 +162,13 @@ const useFileHandling = (params?: UseFileHandling) => {
       const version = endpointsConfig?.[endpoint]?.version ?? defaultAssistantsVersion[endpoint];
       formData.append('version', version);
       formData.append('assistant_id', conversation.assistant_id);
+      formData.append('model', conversation?.model ?? '');
+      formData.append('message_file', 'true');
+    }
+    if (isAssistantsEndpoint(endpoint) && !formData.get('version')) {
+      const endpointsConfig = queryClient.getQueryData<TEndpointsConfig>([QueryKeys.endpoints]);
+      const version = endpointsConfig?.[endpoint]?.version ?? defaultAssistantsVersion[endpoint];
+      formData.append('version', version);
       formData.append('model', conversation?.model ?? '');
       formData.append('message_file', 'true');
     }

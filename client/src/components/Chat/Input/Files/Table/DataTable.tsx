@@ -96,7 +96,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
             deleteFiles({ files: filesToDelete as TFile[] });
             setRowSelection({});
           }}
-          className="ml-1 gap-2 dark:hover:bg-gray-750/25 sm:ml-0"
+          className="dark:hover:bg-gray-850/25 ml-1 gap-2 sm:ml-0"
           disabled={!table.getFilteredSelectedRowModel().rows.length || isDeleting}
         >
           {isDeleting ? (
@@ -121,7 +121,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
           {/* Filter Menu */}
           <DropdownMenuContent
             align="end"
-            className="z-[1001] dark:border-gray-700 dark:bg-gray-750"
+            className="z-[1001] dark:border-gray-700 dark:bg-gray-850"
           >
             {table
               .getAllColumns()
@@ -225,7 +225,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
           )}
         </div>
         <Button
-          className="dark:border-gray-500 dark:hover:bg-gray-600 select-none"
+          className="select-none dark:border-gray-500 dark:hover:bg-gray-600"
           variant="outline"
           size="sm"
           onClick={() => table.previousPage()}
@@ -234,7 +234,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
           {localize('com_ui_prev')}
         </Button>
         <Button
-          className="dark:border-gray-500 dark:hover:bg-gray-600 select-none"
+          className="select-none dark:border-gray-500 dark:hover:bg-gray-600"
           variant="outline"
           size="sm"
           onClick={() => table.nextPage()}

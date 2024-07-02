@@ -144,6 +144,7 @@ export const assistantEndpointSchema = z.object({
   version: z.union([z.string(), z.number()]).default(2),
   supportedIds: z.array(z.string()).min(1).optional(),
   excludedIds: z.array(z.string()).min(1).optional(),
+  privateAssistants: z.boolean().optional(),
   retrievalModels: z.array(z.string()).min(1).optional().default(defaultRetrievalModels),
   capabilities: z
     .array(z.nativeEnum(Capabilities))
@@ -197,6 +198,8 @@ export const endpointSchema = z.object({
   addParams: z.record(z.any()).optional(),
   dropParams: z.array(z.string()).optional(),
   customOrder: z.number().optional(),
+  directEndpoint: z.boolean().optional(),
+  titleMessageRole: z.string().optional(),
 });
 
 export type TEndpoint = z.infer<typeof endpointSchema>;
@@ -223,6 +226,60 @@ export const azureEndpointSchema = z
 export type TAzureConfig = Omit<z.infer<typeof azureEndpointSchema>, 'groups'> &
   TAzureConfigValidationResult;
 
+const ttsOpenaiSchema = z.object({
+  url: z.string().optional(),
+  apiKey: z.string(),
+  model: z.string(),
+  voices: z.array(z.string()),
+});
+
+const ttsElevenLabsSchema = z.object({
+  url: z.string().optional(),
+  websocketUrl: z.string().optional(),
+  apiKey: z.string(),
+  model: z.string(),
+  voices: z.array(z.string()),
+  voice_settings: z
+    .object({
+      similarity_boost: z.number().optional(),
+      stability: z.number().optional(),
+      style: z.number().optional(),
+      use_speaker_boost: z.boolean().optional(),
+    })
+    .optional(),
+  pronunciation_dictionary_locators: z.array(z.string()).optional(),
+});
+
+const ttsLocalaiSchema = z.object({
+  url: z.string(),
+  apiKey: z.string().optional(),
+  voices: z.array(z.string()),
+  backend: z.string(),
+});
+
+const ttsSchema = z.object({
+  openai: ttsOpenaiSchema.optional(),
+  elevenLabs: ttsElevenLabsSchema.optional(),
+  localai: ttsLocalaiSchema.optional(),
+});
+
+const sttSchema = z.object({
+  openai: z
+    .object({
+      url: z.string().optional(),
+      apiKey: z.string().optional(),
+      model: z.string().optional(),
+    })
+    .optional(),
+});
+
+export enum RateLimitPrefix {
+  FILE_UPLOAD = 'FILE_UPLOAD',
+  IMPORT = 'IMPORT',
+  TTS = 'TTS',
+  STT = 'STT',
+}
+
 export const rateLimitSchema = z.object({
   fileUploads: z
     .object({
@@ -233,6 +290,22 @@ export const rateLimitSchema = z.object({
     })
     .optional(),
   conversationsImport: z
+    .object({
+      ipMax: z.number().optional(),
+      ipWindowInMinutes: z.number().optional(),
+      userMax: z.number().optional(),
+      userWindowInMinutes: z.number().optional(),
+    })
+    .optional(),
+  tts: z
+    .object({
+      ipMax: z.number().optional(),
+      ipWindowInMinutes: z.number().optional(),
+      userMax: z.number().optional(),
+      userWindowInMinutes: z.number().optional(),
+    })
+    .optional(),
+  stt: z
     .object({
       ipMax: z.number().optional(),
       ipWindowInMinutes: z.number().optional(),
@@ -289,6 +362,8 @@ export const configSchema = z.object({
       allowedDomains: z.array(z.string()).optional(),
     })
     .default({ socialLogins: defaultSocialLogins }),
+  tts: ttsSchema.optional(),
+  stt: sttSchema.optional(),
   rateLimits: rateLimitSchema.optional(),
   fileConfig: fileConfigSchema.optional(),
   modelSpecs: specsConfigSchema.optional(),
@@ -309,6 +384,12 @@ export const configSchema = z.object({
 export const getConfigDefaults = () => getSchemaDefaults(configSchema);
 
 export type TCustomConfig = z.infer<typeof configSchema>;
+
+export type TProviderSchema =
+  | z.infer<typeof ttsOpenaiSchema>
+  | z.infer<typeof ttsElevenLabsSchema>
+  | z.infer<typeof ttsLocalaiSchema>
+  | undefined;
 
 export enum KnownEndpoints {
   anyscale = 'anyscale',
@@ -392,6 +473,7 @@ export const defaultModels = {
     'code-bison-32k',
   ],
   [EModelEndpoint.anthropic]: [
+    'claude-3-5-sonnet-20240620',
     'claude-3-opus-20240229',
     'claude-3-sonnet-20240229',
     'claude-3-haiku-20240307',
@@ -505,6 +587,20 @@ export function validateVisionModel({
 export const imageGenTools = new Set(['dalle', 'dall-e', 'stable-diffusion']);
 
 /**
+ * Enum for collections using infinite queries
+ */
+export enum InfiniteCollections {
+  /**
+   * Collection for Prompt Groups
+   */
+  PROMPT_GROUPS = 'promptGroups',
+  /**
+   * Collection for Shared Links
+   */
+  SHARED_LINKS = 'sharedLinks',
+}
+
+/**
  * Enum for cache keys.
  */
 export enum CacheKeys {
@@ -512,6 +608,10 @@ export enum CacheKeys {
    * Key for the config store namespace.
    */
   CONFIG_STORE = 'configStore',
+  /**
+   * Key for the config store namespace.
+   */
+  ROLES = 'roles',
   /**
    * Key for the plugins cache.
    */
@@ -533,6 +633,10 @@ export enum CacheKeys {
    * Key for the model queries cache.
    */
   MODEL_QUERIES = 'modelQueries',
+  /**
+   * Key for the default startup config cache.
+   */
+  STARTUP_CONFIG = 'startupConfig',
   /**
    * Key for the default endpoint config cache.
    */
@@ -562,6 +666,10 @@ export enum CacheKeys {
    * Used by Azure OpenAI Assistants.
    */
   ENCODED_DOMAINS = 'encoded_domains',
+  /**
+   * Key for the cached audio run Ids.
+   */
+  AUDIO_RUNS = 'audioRuns',
 }
 
 /**
@@ -584,6 +692,22 @@ export enum ViolationTypes {
    * An issued ban.
    */
   BAN = 'ban',
+  /**
+   * TTS Request Limit Violation.
+   */
+  TTS_LIMIT = 'tts_limit',
+  /**
+   * STT Request Limit Violation.
+   */
+  STT_LIMIT = 'stt_limit',
+  /**
+   * Reset Password Limit Violation.
+   */
+  RESET_PASSWORD_LIMIT = 'reset_password_limit',
+  /**
+   * Verify Email Limit Violation.
+   */
+  VERIFY_EMAIL_LIMIT = 'verify_email_limit',
 }
 
 /**
@@ -665,6 +789,10 @@ export enum SettingsTabValues {
    */
   MESSAGES = 'messages',
   /**
+   * Tab for Speech Settings
+   */
+  SPEECH = 'speech',
+  /**
    * Tab for Beta Features
    */
   BETA = 'beta',
@@ -681,15 +809,21 @@ export enum SettingsTabValues {
 /** Enum for app-wide constants */
 export enum Constants {
   /** Key for the app's version. */
-  VERSION = 'v0.7.2',
+  VERSION = 'v0.7.4-rc1',
   /** Key for the Custom Config's version (librechat.yaml). */
-  CONFIG_VERSION = '1.1.1',
+  CONFIG_VERSION = '1.1.4',
   /** Standard value for the first message's `parentMessageId` value, to indicate no parent exists. */
   NO_PARENT = '00000000-0000-0000-0000-000000000000',
+  /** Standard value for the initial conversationId before a request is sent */
+  NEW_CONVO = 'new',
   /** Fixed, encoded domain length for Azure OpenAI Assistants Function name parsing. */
   ENCODED_DOMAIN_LENGTH = 10,
   /** Identifier for using current_model in multi-model requests. */
   CURRENT_MODEL = 'current_model',
+  /** Common divider for text values */
+  COMMON_DIVIDER = '__',
+  /** Max length for commands */
+  COMMANDS_MAX_LENGTH = 56,
 }
 
 export enum LocalStorageKeys {
@@ -715,6 +849,12 @@ export enum LocalStorageKeys {
   REMEMBER_FORK_OPTION = 'rememberForkOption',
   /** Key for remembering the split at target fork option modifier */
   FORK_SPLIT_AT_TARGET = 'splitAtTarget',
+  /** Key for saving text drafts */
+  TEXT_DRAFT = 'textDraft_',
+  /** Key for saving file drafts */
+  FILES_DRAFT = 'filesDraft_',
+  /** Key for last Selected Prompt Category */
+  LAST_PROMPT_CATEGORY = 'lastPromptCategory',
 }
 
 export enum ForkOptions {
@@ -750,4 +890,11 @@ export enum CohereConstants {
    * Title message as required by Cohere
    */
   TITLE_MESSAGE = 'TITLE:',
+}
+
+export enum SystemCategories {
+  ALL = 'sys__all__sys',
+  MY_PROMPTS = 'sys__my__prompts__sys',
+  NO_CATEGORY = 'sys__no__category__sys',
+  SHARED_PROMPTS = 'sys__shared__prompts__sys',
 }

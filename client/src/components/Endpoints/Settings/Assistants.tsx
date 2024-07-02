@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import type { TPreset } from 'librechat-data-provider';
+import type { Assistant, TPreset } from 'librechat-data-provider';
 import type { TModelSelectProps, Option } from '~/common';
 import { Label, HoverCard, SelectDropDown, HoverCardTrigger } from '~/components/ui';
-import { cn, defaultTextProps, removeFocusOutlines, mapAssistants } from '~/utils';
+import { cn, defaultTextProps, removeFocusRings, mapAssistants } from '~/utils';
 import { useLocalize, useDebouncedInput, useAssistantListMap } from '~/hooks';
 import OptionHover from './OptionHover';
 import { ESide } from '~/common';
@@ -20,15 +20,19 @@ export default function Settings({ conversation, setOption, models, readonly }: 
   const { model, endpoint, assistant_id, endpointType, promptPrefix, instructions } =
     conversation ?? {};
 
+  const currentList = useMemo(
+    () => Object.values(assistantListMap?.[endpoint ?? ''] ?? {}) as Assistant[],
+    [assistantListMap, endpoint],
+  );
+
   const assistants = useMemo(() => {
-    return [
-      defaultOption,
-      ...(assistantListMap[endpoint ?? ''] ?? []).map(({ id, name }) => ({
-        label: name,
-        value: id,
-      })),
-    ].filter(Boolean);
-  }, [assistantListMap, endpoint, defaultOption]);
+    const currentAssistants = (currentList ?? []).map(({ id, name }) => ({
+      label: name,
+      value: id,
+    }));
+
+    return [defaultOption, ...currentAssistants].filter(Boolean);
+  }, [currentList, defaultOption]);
 
   const [onPromptPrefixChange, promptPrefixValue] = useDebouncedInput({
     setOption,
@@ -96,6 +100,9 @@ export default function Settings({ conversation, setOption, models, readonly }: 
       value: assistant.id ?? '',
     });
     setOption('assistant_id')(assistant.id);
+    if (assistant.model) {
+      setModel(assistant.model);
+    }
   };
 
   const optionEndpoint = endpointType ?? endpoint;
@@ -109,7 +116,7 @@ export default function Settings({ conversation, setOption, models, readonly }: 
             setValue={setModel}
             availableValues={modelOptions}
             disabled={readonly}
-            className={cn(defaultTextProps, 'flex w-full resize-none', removeFocusOutlines)}
+            className={cn(defaultTextProps, 'flex w-full resize-none', removeFocusRings)}
             containerClassName="flex w-full resize-none"
           />
         </div>
@@ -124,7 +131,7 @@ export default function Settings({ conversation, setOption, models, readonly }: 
                 setValue={setAssistant}
                 availableValues={assistants as Option[]}
                 disabled={readonly}
-                className={cn(defaultTextProps, 'flex w-full resize-none', removeFocusOutlines)}
+                className={cn(defaultTextProps, 'flex w-full resize-none', removeFocusRings)}
                 containerClassName="flex w-full resize-none"
               />
             </div>
@@ -141,7 +148,7 @@ export default function Settings({ conversation, setOption, models, readonly }: 
           <TextareaAutosize
             id="promptPrefix"
             disabled={readonly}
-            value={promptPrefixValue as string | undefined}
+            value={(promptPrefixValue as string | null | undefined) ?? ''}
             onChange={onPromptPrefixChange}
             placeholder={localize('com_endpoint_prompt_prefix_assistants_placeholder')}
             className={cn(
@@ -158,7 +165,7 @@ export default function Settings({ conversation, setOption, models, readonly }: 
           <TextareaAutosize
             id="instructions"
             disabled={readonly}
-            value={instructionsValue as string | undefined}
+            value={(instructionsValue as string | null | undefined) ?? ''}
             onChange={onInstructionsChange}
             placeholder={localize('com_endpoint_instructions_assistants_placeholder')}
             className={cn(

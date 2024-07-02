@@ -7,6 +7,7 @@ const handleRateLimits = require('./Config/handleRateLimits');
 const { loadDefaultInterface } = require('./start/interface');
 const { azureConfigSetup } = require('./start/azureOpenAI');
 const { loadAndFormatTools } = require('./ToolService');
+const { initializeRoles } = require('~/models/Role');
 const paths = require('~/config/paths');
 
 /**
@@ -16,6 +17,7 @@ const paths = require('~/config/paths');
  * @param {Express.Application} app - The Express application object.
  */
 const AppService = async (app) => {
+  await initializeRoles();
   /** @type {TCustomConfig}*/
   const config = (await loadCustomConfig()) ?? {};
   const configDefaults = getConfigDefaults();
@@ -78,6 +80,7 @@ const AppService = async (app) => {
   if (config?.endpoints?.[EModelEndpoint.azureAssistants]) {
     endpointLocals[EModelEndpoint.azureAssistants] = assistantsConfigSetup(
       config,
+      EModelEndpoint.azureAssistants,
       endpointLocals[EModelEndpoint.azureAssistants],
     );
   }
@@ -85,6 +88,7 @@ const AppService = async (app) => {
   if (config?.endpoints?.[EModelEndpoint.assistants]) {
     endpointLocals[EModelEndpoint.assistants] = assistantsConfigSetup(
       config,
+      EModelEndpoint.assistants,
       endpointLocals[EModelEndpoint.assistants],
     );
   }
