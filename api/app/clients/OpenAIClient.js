@@ -768,7 +768,7 @@ class OpenAIClient extends BaseClient {
     const convo = `||>User:
 "${text}"
 ||>Response:
-"${JSON.stringify(truncateText(responseText))}"`;
+"${JSON.stringify(responseText)}"`;
 
     const { OPENAI_TITLE_MODEL } = process.env ?? {};
 
