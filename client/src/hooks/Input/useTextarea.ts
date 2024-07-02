@@ -14,7 +14,7 @@ import { globalAudioId } from '~/common';
 import store from '~/store';
 
 type KeyEvent = KeyboardEvent<HTMLTextAreaElement>;
-
+const isPhone = window.innerWidth <= 768;
 export default function useTextarea({
   textAreaRef,
   submitButtonRef,
@@ -145,48 +145,94 @@ export default function useTextarea({
     textAreaRef,
     assistantMap,
   ]);
-
   const handleKeyDown = useCallback(
-    (e: KeyEvent) => {
-      if (e.key === 'Enter' && isSubmitting) {
-        return;
+  (e: KeyEvent) => {
+    if (e.key === 'Enter' && isSubmitting) {
+      return;
+    }
+
+    const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
+    const isCtrlEnter = e.key === 'Enter' && e.ctrlKey;
+
+    if (isNonShiftEnter && filesLoading) {
+      e.preventDefault();
+    }
+
+    if (isNonShiftEnter) {
+      e.preventDefault();
+    }
+
+    if (
+      e.key === 'Enter' &&
+      !enterToSend &&
+      !isCtrlEnter &&
+      textAreaRef.current &&
+      !isComposing?.current
+    ) {
+      e.preventDefault();
+      insertTextAtCursor(textAreaRef.current, '\n');
+      forceResize(textAreaRef.current);
+      return;
+    }
+
+    if ((isNonShiftEnter || isCtrlEnter) && !isComposing?.current) {
+      const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement;
+      if (globalAudio) {
+        console.log('Unmuting global audio');
+        globalAudio.muted = false;
       }
-
-      const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
-      const isCtrlEnter = e.key === 'Enter' && e.ctrlKey;
-
-      if (isNonShiftEnter && filesLoading) {
-        e.preventDefault();
-      }
-
-      if (isNonShiftEnter) {
-        e.preventDefault();
-      }
-
-      if (
-        e.key === 'Enter' &&
-        !enterToSend &&
-        !isCtrlEnter &&
-        textAreaRef.current &&
-        !isComposing?.current
-      ) {
+      if (isPhone && isNonShiftEnter) {
         e.preventDefault();
         insertTextAtCursor(textAreaRef.current, '\n');
         forceResize(textAreaRef.current);
-        return;
-      }
-
-      if ((isNonShiftEnter || isCtrlEnter) && !isComposing?.current) {
-        const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement;
-        if (globalAudio) {
-          console.log('Unmuting global audio');
-          globalAudio.muted = false;
-        }
+      } else {
         submitButtonRef.current?.click();
       }
-    },
-    [isSubmitting, filesLoading, enterToSend, textAreaRef, submitButtonRef],
-  );
+    }
+  },
+  [isSubmitting, filesLoading, enterToSend, textAreaRef, submitButtonRef],
+);
+  // const handleKeyDown = useCallback(
+  //   (e: KeyEvent) => {
+  //     if (e.key === 'Enter' && isSubmitting) {
+  //       return;
+  //     }
+
+  //     const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
+  //     const isCtrlEnter = e.key === 'Enter' && e.ctrlKey;
+
+  //     if (isNonShiftEnter && filesLoading) {
+  //       e.preventDefault();
+  //     }
+
+  //     if (isNonShiftEnter) {
+  //       e.preventDefault();
+  //     }
+
+  //     if (
+  //       e.key === 'Enter' &&
+  //       !enterToSend &&
+  //       !isCtrlEnter &&
+  //       textAreaRef.current &&
+  //       !isComposing?.current
+  //     ) {
+  //       e.preventDefault();
+  //       insertTextAtCursor(textAreaRef.current, '\n');
+  //       forceResize(textAreaRef.current);
+  //       return;
+  //     }
+
+  //     if ((isNonShiftEnter || isCtrlEnter) && !isComposing?.current) {
+  //       const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement;
+  //       if (globalAudio) {
+  //         console.log('Unmuting global audio');
+  //         globalAudio.muted = false;
+  //       }
+  //       submitButtonRef.current?.click();
+  //     }
+  //   },
+  //   [isSubmitting, filesLoading, enterToSend, textAreaRef, submitButtonRef],
+  // );
 
   const handleCompositionStart = () => {
     isComposing.current = true;
