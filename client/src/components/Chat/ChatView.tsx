@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useGetMessagesByConvoId } from 'librechat-data-provider/react-query';
 import type { ChatFormValues } from '~/common';
 import { ChatContext, AddedChatContext, useFileMapContext, ChatFormProvider } from '~/Providers';
-import { useChatHelpers, useAddedResponse, useSSE } from '~/hooks';
+import { useChatHelpers, useAddedResponse, useSSE, useMessageScrolling } from '~/hooks';
 import MessagesView from './Messages/MessagesView';
 import { Spinner } from '~/components/svg';
 import Presentation from './Presentation';
@@ -41,6 +41,15 @@ function ChatView({ index = 0 }: { index?: number }) {
     defaultValues: { text: '' },
   });
 
+  const {
+    scrollableRef, // New scrollable ref
+    messagesEndRef,
+    scrollToBottom,
+    showScrollButton,
+    handleSmoothToRef,
+    debouncedHandleScroll,
+  } = useMessageScrolling(messagesTree);
+
   return (
     <ChatFormProvider {...methods}>
       <ChatContext.Provider value={chatHelpers}>
@@ -51,7 +60,10 @@ function ChatView({ index = 0 }: { index?: number }) {
                 <Spinner className="opacity-0" />
               </div>
             ) : messagesTree && messagesTree.length !== 0 ? (
-              <MessagesView messagesTree={messagesTree} Header={<Header />} />
+              <div ref={scrollableRef} className="relative h-full w-full overflow-y-auto">  {/* Applied ref and styles */}
+                <MessagesView messagesTree={messagesTree} Header={<Header />} />
+                <div ref={messagesEndRef} />
+              </div>
             ) : (
               <Landing Header={<Header />} />
             )}
