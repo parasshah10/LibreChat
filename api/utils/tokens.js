@@ -136,12 +136,12 @@ function getModelMaxTokens(modelName, endpoint = EModelEndpoint.openAI, endpoint
   }
 
   if (tokensMap[modelName]?.context) {
-    console.log(`Exact match found for ${modelName}: ${tokensMap[modelName].context}`);
+    // console.log(`Exact match found for ${modelName}: ${tokensMap[modelName].context}`);
     return tokensMap[modelName].context;
   }
 
   if (tokensMap[modelName]) {
-    console.log(`Exact match found for ${modelName}: ${tokensMap[modelName]}`);
+    // console.log(`Exact match found for ${modelName}: ${tokensMap[modelName]}`);
     return tokensMap[modelName];
   }
 
@@ -149,12 +149,12 @@ function getModelMaxTokens(modelName, endpoint = EModelEndpoint.openAI, endpoint
   for (let i = keys.length - 1; i >= 0; i--) {
     if (modelName.includes(keys[i])) {
       const result = tokensMap[keys[i]];
-      console.log(`Partial match found for ${modelName} with key ${keys[i]}: ${result?.context ?? result}`);
+      // console.log(`Partial match found for ${modelName} with key ${keys[i]}: ${result?.context ?? result}`);
       return result?.context ?? result;
     }
   }
 
-  console.log(`No match found for ${modelName}`);
+  // console.log(`No match found for ${modelName}`);
   return undefined;
 }
 
