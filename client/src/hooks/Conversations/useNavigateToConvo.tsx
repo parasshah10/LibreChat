@@ -20,9 +20,9 @@ const useNavigateToConvo = (index = 0) => {
       return;
     }
     setSubmission(null);
-    if (_resetLatestMessage) {
-      clearAllLatestMessages();
-    }
+    // if (_resetLatestMessage) {
+    //   clearAllLatestMessages();
+    // }
 
     let convo = { ...conversation };
     if (!convo?.endpoint) {
