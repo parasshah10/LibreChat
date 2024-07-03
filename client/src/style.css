@@ -1207,9 +1207,6 @@ html {
   height: 100%;
 }
 
-.bg-token-main-surface-primary {
-  background-color: #f4f4f4; 
-}
 
 .dark body,
 .dark html {
