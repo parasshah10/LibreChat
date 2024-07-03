@@ -1203,10 +1203,12 @@ button {
   background-color: transparent;
 }
 
-body,
-html {
-  overflow: hidden !important;
-  height: 100%;
+@media (min-width: 768px) {
+  body,
+  html {
+    overflow: hidden !important;
+    height: 100%;
+  }
 }
 
 .bg-token-main-surface-primary {
