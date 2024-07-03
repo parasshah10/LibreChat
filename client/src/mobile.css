@@ -35,7 +35,7 @@
     transition: all 0.15s;
   }
   .text-message {
-    font-size: 2rem !important; 
+    font-size: 1.125rem !important; 
   }
   .nav-mask {
     position: fixed;
