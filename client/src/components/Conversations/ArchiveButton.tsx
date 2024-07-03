@@ -12,13 +12,16 @@ type ArchiveButtonProps = {
   shouldArchive: boolean;
   icon: React.ReactNode;
   className?: string;
+  appendLabel?: boolean;  // Ensure this prop is defined
 };
+
 export default function ArchiveButton({
   conversationId,
   retainView,
   shouldArchive,
   icon,
   className = '',
+  appendLabel = false,  // Default value for appendLabel
 }: ArchiveButtonProps) {
   const localize = useLocalize();
   const navigate = useNavigate();
@@ -64,7 +67,10 @@ export default function ArchiveButton({
       <TooltipProvider delayDuration={250}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="h-5 w-5">{icon}</span>
+            <span className="flex items-center">
+              {icon}
+              {appendLabel && <span className="ml-2">{localize(`com_ui_${label}`)}</span>}  // Add label text next to the icon
+            </span>
           </TooltipTrigger>
           <TooltipContent side="top" sideOffset={0}>
             {localize(`com_ui_${label}`)}
