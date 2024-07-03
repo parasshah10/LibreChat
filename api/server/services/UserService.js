@@ -93,7 +93,7 @@ const getUserKeyExpiry = async ({ userId, name }) => {
   if (!keyValue) {
     return { expiresAt: null };
   }
-  return { expiresAt: keyValue.expiresAt };
+  return { expiresAt: keyValue.expiresAt || 'never' };
 };
 
 /**
