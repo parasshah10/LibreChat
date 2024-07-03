@@ -34,6 +34,10 @@
     width: calc(100% - 10px)  ;
     transition: all 0.15s;
   }
+  .text-message {
+    font-size: 2rem; 
+    font-weight: bold;
+  }
   .nav-mask {
     position: fixed;
     z-index: 63;
