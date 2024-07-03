@@ -69,7 +69,7 @@ export default function ArchiveButton({
           <TooltipTrigger asChild>
             <span className="flex items-center">
               {icon}
-              {appendLabel && <span className="ml-2">{localize(`com_ui_${label}`)}</span>}  // Add label text next to the icon
+              {appendLabel && <span className="ml-2">{localize(`com_ui_${label}`)}</span>}
             </span>
           </TooltipTrigger>
           <TooltipContent side="top" sideOffset={0}>
