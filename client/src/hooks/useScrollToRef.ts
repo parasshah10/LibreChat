@@ -9,10 +9,12 @@ type TUseScrollToRef = {
 
 export default function useScrollToRef({ targetRef, callback, smoothCallback }: TUseScrollToRef) {
  const logAndScroll = (behavior: 'instant' | 'smooth', callbackFn: () => void) => {
+   const isMobile = window.innerWidth <= 768;
+   const blockPosition = isMobile ? 'start' : 'end';
   // Debugging:
   // console.dir(targetRef.current); // This will log the detailed properties of the targetRef
   // console.log(`Scrolling with behavior: ${behavior}, Time: ${new Date().toISOString()}`);
-  targetRef.current?.scrollIntoView({ behavior, block: 'start'});
+  targetRef.current?.scrollIntoView({ behavior, block: blockPosition});
   callbackFn();
 };
 
