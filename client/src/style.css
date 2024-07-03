@@ -1207,6 +1207,13 @@ html {
   height: 100%;
 }
 
+.bg-token-main-surface-primary {
+  background-color: #f4f4f4 !important; 
+}
+
+.dark .bg-token-main-surface-primary {
+  background-color: #171717 !important;
+}
 
 
 
