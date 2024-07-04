@@ -376,7 +376,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
               <span className="h-5 w-5 text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-200">
                 🤖
               </span>
-              {localize('com_ui_ai_rename')}
+              AI Rename
             </button>
             <ArchiveButton
               conversationId={conversationId}
