@@ -95,19 +95,19 @@ export default function MultiMessage({
     [messagesTree?.length, setSiblingIdx],
   );
 
-  useEffect(() => {
-    // console.log('MessagesTree changed:', messagesTree);
-    // console.log('Current messageId:', messageId);
-    // console.log('Current siblingIdx:', siblingIdx);
-    console.log('Ran first one!')
-    // setSiblingIdx(0);
-  }, [messagesTree?.length]);
+  // useEffect(() => {
+  //   // console.log('MessagesTree changed:', messagesTree);
+  //   // console.log('Current messageId:', messageId);
+  //   // console.log('Current siblingIdx:', siblingIdx);
+  //   console.log('Ran first one!')
+  //   // setSiblingIdx(0);
+  // }, [messagesTree?.length]);
 
   useEffect(() => {
     if (messagesTree?.length && siblingIdx >= messagesTree?.length) {
       // console.log('Resetting siblingIdx to 0');
       console.log('Ran second one!')
-      // setSiblingIdx(0);
+      setSiblingIdx(0);
     }
   }, [siblingIdx, messagesTree?.length, setSiblingIdx]);
 
