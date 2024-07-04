@@ -96,41 +96,41 @@ export default function MultiMessage({
   );
 
   useEffect(() => {
-    console.log('MessagesTree changed:', messagesTree);
-    console.log('Current messageId:', messageId);
-    console.log('Current siblingIdx:', siblingIdx);
+    // console.log('MessagesTree changed:', messagesTree);
+    // console.log('Current messageId:', messageId);
+    // console.log('Current siblingIdx:', siblingIdx);
     console.log('Ran first one!')
     // setSiblingIdx(0);
   }, [messagesTree?.length]);
 
   useEffect(() => {
     if (messagesTree?.length && siblingIdx >= messagesTree?.length) {
-      console.log('Resetting siblingIdx to 0');
+      // console.log('Resetting siblingIdx to 0');
       console.log('Ran second one!')
       // setSiblingIdx(0);
     }
   }, [siblingIdx, messagesTree?.length, setSiblingIdx]);
 
   if (!(messagesTree && messagesTree?.length)) {
-    console.log('No messagesTree or empty messagesTree');
+    // console.log('No messagesTree or empty messagesTree');
     return null;
   }
 
-  console.log('All siblings:', messagesTree);
-  console.log('Current siblingIdx:', siblingIdx);
-  console.log('Total siblings:', messagesTree.length);
+  // console.log('All siblings:', messagesTree);
+  // console.log('Current siblingIdx:', siblingIdx);
+  // console.log('Total siblings:', messagesTree.length);
 
   const message = messagesTree[messagesTree.length - siblingIdx - 1];
 
   if (!message) {
-    console.log('No message found for current siblingIdx');
+    // console.log('No message found for current siblingIdx');
     return null;
   }
 
-  console.log('Current message:', message);
+  // console.log('Current message:', message);
 
   if (message.content) {
-    console.log('Rendering MessageParts');
+    // console.log('Rendering MessageParts');
     return (
       <MessageParts
         key={message.messageId}
@@ -144,7 +144,7 @@ export default function MultiMessage({
     );
   }
 
-  console.log('Rendering Message');
+  // console.log('Rendering Message');
   return (
     <Message
       key={message.messageId}
