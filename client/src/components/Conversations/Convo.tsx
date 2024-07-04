@@ -260,10 +260,10 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
   };
 
   // Function to print messages to the console
-  const printMessages = () => {
-    const messages = queryClient.getQueryData([QueryKeys.messages, conversationId]);
+const printMessages = () => {
+    const messages = queryClient.getQueryData([QueryKeys.messages, conversationId, 0]); // Add index 0
     console.log("Messages for conversation", conversationId, ":", messages);
-    setIsPopoverActive(false); // Close the dropdown after printing
+    setIsPopoverActive(false);
   };
 
   const renameHandler = (e: MouseEvent<HTMLButtonElement>) => {
