@@ -58,7 +58,8 @@ const resubmitMessage = () => {
       },
     );
     console.log(siblingIdx);
-    setSiblingIdx((siblingIdx ?? 0) - 1);
+    // setSiblingIdx((siblingIdx ?? 0) - 1);
+    setSiblingIdx(0);
   } else {
     const messages = getMessages();
     const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
