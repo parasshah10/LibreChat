@@ -99,6 +99,7 @@ export default function MultiMessage({
 
   useEffect(() => {
     // reset siblingIdx when the tree changes, mostly when a new message is submitting.
+    console.log('Ran First One')
     console.log(siblingIdx)      
     console.log(messagesTree.length)
     // if (messagesTree?.length && siblingIdx >= messagesTree?.length) {
