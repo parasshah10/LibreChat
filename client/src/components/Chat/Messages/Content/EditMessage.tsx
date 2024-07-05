@@ -57,7 +57,7 @@ const resubmitMessage = () => {
         resubmitFiles: true,
       },
     );
-    console.log(siblingIdx);
+    // console.log(siblingIdx);
     setSiblingIdx((siblingIdx ?? 0) - 1);
     // const event = new CustomEvent('messageResubmitted', { detail: { messageId, parentMessageId } });
     // window.dispatchEvent(event);
