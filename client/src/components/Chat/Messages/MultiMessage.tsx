@@ -14,7 +14,7 @@ export default function MultiMessage({
   setCurrentEditId,
 }: TMessageProps) {
   const [siblingIdx, setSiblingIdx] = useRecoilState(store.messagesSiblingIdxFamily(messageId));
-
+  const [isAddingNewMessage, setIsAddingNewMessage] = useState(false);
   const setSiblingIdxRev = useCallback(
     (value: number) => {
       setSiblingIdx((messagesTree?.length ?? 0) - value - 1);
@@ -26,7 +26,11 @@ export default function MultiMessage({
     // console.log('MessagesTree changed:', messagesTree);
     // console.log('Current messageId:', messageId);
     // console.log('Current siblingIdx:', siblingIdx);
-    console.log('Ran first one!')
+    if (isAddingNewMessage) {
+      console.log('Ran first one!')
+    setSiblingIdx(0);
+  }
+    
     // setSiblingIdx(0);
   }, [messagesTree?.length]);
 
