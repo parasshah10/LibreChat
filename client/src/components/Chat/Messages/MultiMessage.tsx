@@ -24,8 +24,9 @@ export default function MultiMessage({
   useEffect(() => {
       
       console.log('Ran first one!')
-     console.log(currentEditId)
-    // setSiblingIdx(0);
+     if (currentEditId !== -1) { // Check if an edit is ongoing
+      setSiblingIdx(0); 
+    }
   }, [messagesTree?.length]);
 
   useEffect(() => {
