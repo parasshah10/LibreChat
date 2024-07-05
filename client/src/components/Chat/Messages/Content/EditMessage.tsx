@@ -57,7 +57,7 @@ const resubmitMessage = () => {
         resubmitFiles: true,
       },
     );
-
+    console.log(siblingIdx);
     setSiblingIdx((siblingIdx ?? 0) - 1);
   } else {
     const messages = getMessages();
