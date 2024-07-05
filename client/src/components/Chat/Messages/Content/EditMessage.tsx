@@ -44,9 +44,8 @@ const EditMessage = ({
   }, []);
 
   const resubmitMessage = () => {
-    console.log('Yip yip hurray!')
+    
     if (message.isCreatedByUser) {
-      console.log('hurray 2')
       ask(
         {
           text: editedText,
@@ -60,7 +59,6 @@ const EditMessage = ({
 
       setSiblingIdx((siblingIdx ?? 0) - 1);
     } else {
-      console.log('hurray 3')
       const messages = getMessages();
       const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
 
