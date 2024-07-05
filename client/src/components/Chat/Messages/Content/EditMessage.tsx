@@ -43,42 +43,44 @@ const EditMessage = ({
     }
   }, []);
 
-  const resubmitMessage = () => {
-    if (message.isCreatedByUser) {
-      ask(
-        {
-          text: editedText,
-          parentMessageId,
-          conversationId,
-        },
-        {
-          resubmitFiles: true,
-        },
-      );
+const resubmitMessage = () => {
+  console.log('Resubmit button clicked');
+  
+  if (message.isCreatedByUser) {
+    ask(
+      {
+        text: editedText,
+        parentMessageId,
+        conversationId,
+      },
+      {
+        resubmitFiles: true,
+      },
+    );
 
-      setSiblingIdx((siblingIdx ?? 0) - 1);
-    } else {
-      const messages = getMessages();
-      const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
+    setSiblingIdx((siblingIdx ?? 0) - 1);
+  } else {
+    const messages = getMessages();
+    const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
 
-      if (!parentMessage) {
-        return;
-      }
-      ask(
-        { ...parentMessage },
-        {
-          editedText,
-          editedMessageId: messageId,
-          isRegenerate: true,
-          isEdited: true,
-        },
-      );
-
-      setSiblingIdx((siblingIdx ?? 0) - 1);
+    if (!parentMessage) {
+      return;
     }
+    ask(
+      { ...parentMessage },
+      {
+        editedText,
+        editedMessageId: messageId,
+        isRegenerate: true,
+        isEdited: true,
+      },
+    );
 
-    enterEdit(true);
-  };
+    setSiblingIdx((siblingIdx ?? 0) - 1);
+  }
+
+  enterEdit(true);
+};
 
   const updateMessage = () => {
     const messages = getMessages();
