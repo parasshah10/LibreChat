@@ -59,8 +59,8 @@ const resubmitMessage = () => {
     );
     console.log(siblingIdx);
     setSiblingIdx((siblingIdx ?? 0) - 1);
-    const event = new CustomEvent('messageResubmitted', { detail: { messageId, parentMessageId } });
-    window.dispatchEvent(event);
+    // const event = new CustomEvent('messageResubmitted', { detail: { messageId, parentMessageId } });
+    // window.dispatchEvent(event);
   } else {
     const messages = getMessages();
     const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
