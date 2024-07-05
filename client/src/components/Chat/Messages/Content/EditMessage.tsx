@@ -44,7 +44,6 @@ const EditMessage = ({
   }, []);
 
   const resubmitMessage = () => {
-    
     if (message.isCreatedByUser) {
       ask(
         {
@@ -191,3 +190,4 @@ const EditMessage = ({
   );
 };
 
+export default EditMessage;
