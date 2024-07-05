@@ -26,10 +26,7 @@ export default function MultiMessage({
     // console.log('MessagesTree changed:', messagesTree);
     // console.log('Current messageId:', messageId);
     // console.log('Current siblingIdx:', siblingIdx);
-    if (isAddingNewMessage) {
       console.log('Ran first one!')
-    setSiblingIdx(0);
-  }
     
     // setSiblingIdx(0);
   }, [messagesTree?.length]);
