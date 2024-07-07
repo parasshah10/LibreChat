@@ -90,6 +90,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         const openAIMessages = convertToOpenAIFormat(messagesTree);
 
         // Add console log to see the result/output
+        console.log('MessagesTree:',messagesTree);
         console.log('OpenAI Messages:', openAIMessages);
         console.log('Is Loading:', isLoading);
 
