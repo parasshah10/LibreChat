@@ -110,7 +110,19 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         const data = await response.json();
         const generatedTitle = data.choices[0].message.content.trim();
         console.log('Generated Title:', generatedTitle);
-
+        updateConvoMutation.mutate(
+                { conversationId, title: generatedTitle },
+                {
+                    onSuccess: () => refreshConversations(),
+                    onError: () => {
+                        showToast({
+                            message: 'Failed to rename conversation',
+                            severity: NotificationSeverity.ERROR,
+                            showIcon: true,
+                        });
+                    },
+                },
+            );
         // Copy the formatted messages to the clipboard
         navigator.clipboard.writeText(generatedTitle)
             .then(() => {
