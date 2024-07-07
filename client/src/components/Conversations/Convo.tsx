@@ -17,6 +17,8 @@
 // import { cn } from '~/utils';
 // import store from '~/store';
 // import ShareButton from './ShareButton';
+// import { QueryKeys } from 'librechat-data-provider';
+// import { useQueryClient } from '@tanstack/react-query';
 
 // type KeyEvent = KeyboardEvent<HTMLInputElement>;
 
@@ -36,6 +38,9 @@
 //   const [renaming, setRenaming] = useState(false);
 //   const [isPopoverActive, setIsPopoverActive] = useState(false);
 
+//   // Access the query client
+//   const queryClient = useQueryClient();
+
 //   const clickHandler = async (event: React.MouseEvent<HTMLAnchorElement>) => {
 //     if (event.button === 0 && (event.ctrlKey || event.metaKey)) {
 //       toggleNav();
@@ -52,6 +57,13 @@
 //     // set document title
 //     document.title = title;
 //     navigateWithLastTools(conversation);
+//   };
+
+//   // Function to print messages to the console
+// const printMessages = () => {
+//     const messages = queryClient.getQueryData([QueryKeys.messages, conversationId, 0]); // Add index 0
+//     console.log("Messages for conversation", conversationId, ":", messages);
+//     setIsPopoverActive(false);
 //   };
 
 //   const renameHandler = (e: MouseEvent<HTMLButtonElement>) => {
@@ -143,6 +155,12 @@
 //               appendLabel={true}
 //               className="mb-[3.5px]"
 //             />
+//             <button 
+//               onClick={printMessages} 
+//               className="group m-1.5 mb-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
+//             >
+//               Print Messages
+//             </button>
 //             <ArchiveButton
 //               conversationId={conversationId}
 //               retainView={retainView}
@@ -160,7 +178,6 @@
 //               className="group m-1.5 mt-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
 //             />
 //           </DropDownMenu>
-
 //         </HoverToggle>
 //       )}
 //       <a
@@ -201,20 +218,20 @@
 import { useRecoilValue } from 'recoil';
 import { useParams } from 'react-router-dom';
 import { useState, useRef, useMemo } from 'react';
-import { useGetEndpointsQuery, useGetStartupConfig } from 'librechat-data-provider/react-query';
+import { useGetEndpointsQuery, useGetStartupConfig, useGetMessagesByConvoId } from 'librechat-data-provider/react-query';
 import type { MouseEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useUpdateConversationMutation } from '~/data-provider';
 import EndpointIcon from '~/components/Endpoints/EndpointIcon';
 import { useConversations, useNavigateToConvo } from '~/hooks';
 import { NotificationSeverity } from '~/common';
 import { ArchiveIcon } from '~/components/svg';
-import { useToastContext } from '~/Providers';
+import { useToastContext, useFileMapContext } from '~/Providers';
 import DropDownMenu from './DropDownMenu';
 import ArchiveButton from './ArchiveButton';
 import DeleteButton from './DeleteButton';
 import RenameButton from './RenameButton';
 import HoverToggle from './HoverToggle';
-import { cn } from '~/utils';
+import { cn, buildTree } from '~/utils';
 import store from '~/store';
 import ShareButton from './ShareButton';
 import { QueryKeys } from 'librechat-data-provider';
@@ -241,6 +258,26 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
   // Access the query client
   const queryClient = useQueryClient();
 
+  // Use the custom hook `useFileMapContext` to get the file map context.
+  const fileMap = useFileMapContext();
+
+  // Function to print messages to the console
+  const printMessages = () => {
+    const { data: messagesTree = null, isLoading } = useGetMessagesByConvoId(conversationId ?? '', {
+      select: (data) => {
+        const dataTree = buildTree({ messages: data, fileMap });
+        return dataTree?.length === 0 ? null : dataTree ?? null;
+      },
+      enabled: !!fileMap,
+    });
+
+    // Add console log to see the result/output
+    console.log('Messages Tree:', messagesTree);
+    console.log('Is Loading:', isLoading);
+
+    setIsPopoverActive(false);
+  };
+
   const clickHandler = async (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button === 0 && (event.ctrlKey || event.metaKey)) {
       toggleNav();
@@ -257,13 +294,6 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
     // set document title
     document.title = title;
     navigateWithLastTools(conversation);
-  };
-
-  // Function to print messages to the console
-const printMessages = () => {
-    const messages = queryClient.getQueryData([QueryKeys.messages, conversationId, 0]); // Add index 0
-    console.log("Messages for conversation", conversationId, ":", messages);
-    setIsPopoverActive(false);
   };
 
   const renameHandler = (e: MouseEvent<HTMLButtonElement>) => {
