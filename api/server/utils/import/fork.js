@@ -51,13 +51,15 @@ async function forkConversation({
 
     let messagesToClone = [];
 
-    if (option === ForkOptions.DIRECT_PATH) {
-      // Direct path only
-      messagesToClone = BaseClient.getMessagesForConversation({
-        messages: originalMessages,
-        parentMessageId: targetMessageId,
-      });
-    } else if (option === ForkOptions.INCLUDE_BRANCHES) {
+if (option === ForkOptions.DIRECT_PATH) {
+    console.log('Direct path only');
+  console.log('Original Messages:', originalMessages); // Log original messages
+  messagesToClone = BaseClient.getMessagesForConversation({
+    messages: originalMessages,
+    parentMessageId: targetMessageId,
+  });
+  console.log('Messages to Clone:', messagesToClone); // Log messages to clone
+} else if (option === ForkOptions.INCLUDE_BRANCHES) {
       // Direct path and siblings
       messagesToClone = getAllMessagesUpToParent(originalMessages, targetMessageId);
     } else if (option === ForkOptions.TARGET_LEVEL || !option) {
