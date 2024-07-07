@@ -234,11 +234,18 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                             className="mb-[3.5px]"
                         />
                         <button
-                            onClick={printMessages}
-                            className="group m-1.5 mb-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
-                        >
-                            Print Messages
-                        </button>
+    onClick={async () => {
+        try {
+            await printMessages();
+        } catch (error) {
+            console.error('Error in printMessages:', error);
+            // Optionally show an error toast here
+        }
+    }}
+    className="group m-1.5 mb-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
+>
+    Print Messages
+</button>
                         <ArchiveButton
                             conversationId={conversationId}
                             retainView={retainView}
