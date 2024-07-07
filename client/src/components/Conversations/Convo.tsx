@@ -102,8 +102,9 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                 },
                 body: JSON.stringify({
                     model: 'command-r-plus',
+                    temperature: 1,
                     messages: [
-                        { role: 'system', content: `Generate a concise title (4-5 words maximum) for this conversation. \n\n${formattedMessages}\n\nTITLE: ` }
+                        { role: 'system', content: `Generate a concise title (4-7 words maximum) for this conversation (without quotation marks). \n\n${formattedMessages}\n\nTITLE: ` }
                     ],
                 })
             });
