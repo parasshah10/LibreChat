@@ -46,9 +46,9 @@ function collectLatestPath(node, collectedMessages = []) {
 function convertToOpenAIFormat(messagesTree) {
     let openAIMessages = [];
 
-    // Ensuring we start from the first root node
+    // Ensuring we start from the last root node
     if (messagesTree.length > 0) {
-        openAIMessages = collectLatestPath(messagesTree[0]);
+        openAIMessages = collectLatestPath(messagesTree[messagesTree.length - 1]);
     }
 
     return openAIMessages;
@@ -90,7 +90,6 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         const openAIMessages = convertToOpenAIFormat(messagesTree);
 
         // Add console log to see the result/output
-        console.log('MessagesTree:',messagesTree);
         console.log('OpenAI Messages:', openAIMessages);
         console.log('Is Loading:', isLoading);
 
