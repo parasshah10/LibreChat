@@ -58,7 +58,7 @@ const resubmitMessage = () => {
       },
     );
     // console.log(siblingIdx);
-    setSiblingIdx((siblingIdx ?? 0) - 1);
+    setSiblingIdx(siblingIdx ?? 0);
     // const event = new CustomEvent('messageResubmitted', { detail: { messageId, parentMessageId } });
     // window.dispatchEvent(event);
   } else {
