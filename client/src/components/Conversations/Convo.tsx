@@ -89,7 +89,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
     // Function to print messages to the console
     const printMessages = async () => {
         const openAIMessages = convertToOpenAIFormat(messagesTree);
-
+        console.log('Messages Tree:', messagesTree);
         console.log('OpenAI Messages:', openAIMessages);
         const formattedMessages = openAIMessages.map(message => `[${message.role}]: ${message.content}`).join('\n');
 
