@@ -78,7 +78,7 @@ const resubmitMessage = () => {
       },
     );
 
-    setSiblingIdx((siblingIdx ?? 0) - 1);
+    setSiblingIdx(siblingIdx ?? 0);
   }
 
   enterEdit(true);
