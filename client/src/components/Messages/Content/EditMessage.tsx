@@ -31,7 +31,7 @@ const EditMessage = ({
         conversationId,
       });
 
-      setSiblingIdx((siblingIdx ?? 0) - 1);
+      setSiblingIdx((siblingIdx ?? 0) + 1);
     } else {
       const parentMessage = messages?.find((msg) => msg.messageId === parentMessageId);
 
