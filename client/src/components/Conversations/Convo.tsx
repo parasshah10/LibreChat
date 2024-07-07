@@ -92,7 +92,23 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         // Add console log to see the result/output
         console.log('OpenAI Messages:', openAIMessages);
         const formattedMessages = openAIMessages.map(message => `[${message.role}]: ${message.content}`).join('\n');
+            const response = await fetch('https://sweden-infants-manga-paso.trycloudflare.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer hi`
+                },
+                body: JSON.stringify({
+                    model: 'command-r-plus',
+                    messages: [
+                        { role: 'system', content: 'Generate a concise title (4-5 words maximum) for this conversation. \n\n${formattedMessages}\n\nTITLE: ' }
+                    ],
+                })
+            });
 
+            const data = await response.json();
+            const generatedTitle = data.choices[0].message.content.trim();
+            console.log('Generated Title:', generatedTitle);
     // Copy the formatted messages to the clipboard
      navigator.clipboard.writeText(formattedMessages)
         .then(() => {
