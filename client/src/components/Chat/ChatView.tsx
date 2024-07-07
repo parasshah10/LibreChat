@@ -30,7 +30,8 @@ function ChatView({ index = 0 }: { index?: number }) {
     },
     enabled: !!fileMap,
   });
-
+  console.log('Messages Tree:', messagesTree);
+  console.log('Is Loading:', isLoading);
   const chatHelpers = useChatHelpers(index, conversationId);
   const addedChatHelpers = useAddedResponse({ rootIndex: index });
 
