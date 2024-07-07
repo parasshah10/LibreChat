@@ -112,7 +112,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         console.log('Generated Title:', generatedTitle);
 
         // Copy the formatted messages to the clipboard
-        navigator.clipboard.writeText(formattedMessages)
+        navigator.clipboard.writeText(generatedTitle)
             .then(() => {
                 console.log('Messages copied to clipboard');
             })
