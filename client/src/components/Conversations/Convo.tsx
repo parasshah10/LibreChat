@@ -270,11 +270,40 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
     enabled: !!fileMap,
   });
 
+  // Function to get the last message in the tree
+  function getLastMessage(node) {
+    if (!node.children || node.children.length === 0) {
+      return node;
+    }
+    return getLastMessage(node.children[node.children.length - 1]);
+  }
+
+  // Function to convert messages to OpenAI format
+  function convertToOpenAIFormat(messagesTree) {
+    const openAIMessages = [];
+
+    function traverse(node) {
+      if (node.isCreatedByUser) {
+        openAIMessages.push({ role: 'user', content: node.text });
+      } else {
+        openAIMessages.push({ role: 'assistant', content: node.text });
+      }
+
+      node.children.forEach(child => traverse(child));
+    }
+
+    messagesTree.forEach(rootNode => traverse(rootNode));
+
+    return openAIMessages;
+  }
+
   // Function to print messages to the console
   const printMessages = () => {
+    const lastMessage = getLastMessage(messagesTree[0]);
+    const openAIMessages = convertToOpenAIFormat([lastMessage]);
+
     // Add console log to see the result/output
-    console.log('Messages Tree:', messagesTree);
-    console.log('Is Loading:', isLoading);
+    console.log('OpenAI Messages:', openAIMessages);
 
     setIsPopoverActive(false);
   };
