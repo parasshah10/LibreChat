@@ -261,16 +261,17 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
   // Use the custom hook `useFileMapContext` to get the file map context.
   const fileMap = useFileMapContext();
 
+  // Use the custom hook `useGetMessagesByConvoId` to fetch messages for a specific conversation ID.
+  const { data: messagesTree = null, isLoading } = useGetMessagesByConvoId(conversationId ?? '', {
+    select: (data) => {
+      const dataTree = buildTree({ messages: data, fileMap });
+      return dataTree?.length === 0 ? null : dataTree ?? null;
+    },
+    enabled: !!fileMap,
+  });
+
   // Function to print messages to the console
   const printMessages = () => {
-    const { data: messagesTree = null, isLoading } = useGetMessagesByConvoId(conversationId ?? '', {
-      select: (data) => {
-        const dataTree = buildTree({ messages: data, fileMap });
-        return dataTree?.length === 0 ? null : dataTree ?? null;
-      },
-      enabled: !!fileMap,
-    });
-
     // Add console log to see the result/output
     console.log('Messages Tree:', messagesTree);
     console.log('Is Loading:', isLoading);
