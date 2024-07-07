@@ -23,6 +23,7 @@ import store from '~/store';
 import ShareButton from './ShareButton';
 import { QueryKeys } from 'librechat-data-provider';
 import { useQueryClient } from '@tanstack/react-query';
+import { EditIcon, CheckMark } from '~/components/svg';
 
 type KeyEvent = KeyboardEvent<HTMLInputElement>;
 
@@ -87,30 +88,30 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
 
     // Function to print messages to the console
     const printMessages = async () => {
-    const openAIMessages = convertToOpenAIFormat(messagesTree);
+        const openAIMessages = convertToOpenAIFormat(messagesTree);
 
-    console.log('OpenAI Messages:', openAIMessages);
-    const formattedMessages = openAIMessages.map(message => `[${message.role}]: ${message.content}`).join('\n');
+        console.log('OpenAI Messages:', openAIMessages);
+        const formattedMessages = openAIMessages.map(message => `[${message.role}]: ${message.content}`).join('\n');
 
-    try {
-        const response = await fetch('https://sweden-infants-manga-paso.trycloudflare.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer hi`
-            },
-            body: JSON.stringify({
-                model: 'command-r-plus',
-                messages: [
-                    { role: 'system', content: `Generate a concise title (4-5 words maximum) for this conversation. \n\n${formattedMessages}\n\nTITLE: ` }
-                ],
-            })
-        });
+        try {
+            const response = await fetch('https://sweden-infants-manga-paso.trycloudflare.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer hi`
+                },
+                body: JSON.stringify({
+                    model: 'command-r-plus',
+                    messages: [
+                        { role: 'system', content: `Generate a concise title (4-5 words maximum) for this conversation. \n\n${formattedMessages}\n\nTITLE: ` }
+                    ],
+                })
+            });
 
-        const data = await response.json();
-        const generatedTitle = data.choices[0].message.content.trim();
-        console.log('Generated Title:', generatedTitle);
-        updateConvoMutation.mutate(
+            const data = await response.json();
+            const generatedTitle = data.choices[0].message.content.trim();
+            console.log('Generated Title:', generatedTitle);
+            updateConvoMutation.mutate(
                 { conversationId, title: generatedTitle },
                 {
                     onSuccess: () => refreshConversations(),
@@ -123,20 +124,20 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                     },
                 },
             );
-        // Copy the formatted messages to the clipboard
-        navigator.clipboard.writeText(generatedTitle)
-            .then(() => {
-                console.log('Generated Title copied to clipboard');
-            })
-            .catch((error) => {
-                console.error('Failed to copy generated title to clipboard:', error);
-            });
+            // Copy the formatted messages to the clipboard
+            navigator.clipboard.writeText(generatedTitle)
+                .then(() => {
+                    console.log('Generated Title copied to clipboard');
+                })
+                .catch((error) => {
+                    console.error('Failed to copy generated title to clipboard:', error);
+                });
 
-        setIsPopoverActive(false);
-    } catch (error) {
-        console.error('Error generating title:', error);
-    }
-};
+            setIsPopoverActive(false);
+        } catch (error) {
+            console.error('Error generating title:', error);
+        }
+    };
 
     const clickHandler = async (event: React.MouseEvent<HTMLAnchorElement>) => {
         if (event.button === 0 && (event.ctrlKey || event.metaKey)) {
@@ -246,18 +247,18 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                             className="mb-[3.5px]"
                         />
                         <button
-    onClick={async () => {
-        try {
-            await printMessages();
-        } catch (error) {
-            console.error('Error in printMessages:', error);
-            // Optionally show an error toast here
-        }
-    }}
-    className="group m-1.5 mb-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
->
-    Print Messages
-</button>
+                            onClick={async () => {
+                                try {
+                                    await printMessages();
+                                } catch (error) {
+                                    console.error('Error in printMessages:', error);
+                                    // Optionally show an error toast here
+                                }
+                            }}
+                            className="group m-1.5 mb-[3.5px] flex w-full cursor-pointer items-center gap-2 rounded p-2.5 text-sm hover:bg-gray-200 focus-visible:bg-gray-200 focus-visible:outline-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 dark:hover:bg-gray-600 dark:focus-visible:bg-gray-600"
+                        >
+                            <EditIcon /> AI Rename
+                        </button>
                         <ArchiveButton
                             conversationId={conversationId}
                             retainView={retainView}
