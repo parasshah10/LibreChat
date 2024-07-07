@@ -243,26 +243,29 @@ import { useQueryClient } from '@tanstack/react-query';
 
 type KeyEvent = KeyboardEvent<HTMLInputElement>;
 
-// Function to traverse the tree and collect all messages
-function collectMessages(node, collectedMessages = []) {
+// Function to traverse the tree and collect the latest path
+function collectLatestPath(node, collectedMessages = []) {
     if (node.isCreatedByUser) {
         collectedMessages.push({ role: 'user', content: node.text });
     } else {
         collectedMessages.push({ role: 'assistant', content: node.text });
     }
 
-    // Recursively collect messages from children
-    node.children.forEach(child => collectMessages(child, collectedMessages));
+    // If there are children, continue with the latest one
+    if (node.children && node.children.length > 0) {
+        collectLatestPath(node.children[node.children.length - 1], collectedMessages);
+    }
 
     return collectedMessages;
 }
 
 function convertToOpenAIFormat(messagesTree) {
     let openAIMessages = [];
-    
-    messagesTree.forEach(rootNode => {
-        openAIMessages = collectMessages(rootNode, openAIMessages);
-    });
+
+    // Assuming we start from the first root node
+    if (messagesTree.length > 0) {
+        openAIMessages = collectLatestPath(messagesTree[0]);
+    }
 
     return openAIMessages;
 }
