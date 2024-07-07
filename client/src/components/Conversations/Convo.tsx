@@ -114,10 +114,10 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
         // Copy the formatted messages to the clipboard
         navigator.clipboard.writeText(generatedTitle)
             .then(() => {
-                console.log('Messages copied to clipboard');
+                console.log('Generated Title copied to clipboard');
             })
             .catch((error) => {
-                console.error('Failed to copy messages to clipboard:', error);
+                console.error('Failed to copy generated title to clipboard:', error);
             });
 
         setIsPopoverActive(false);
