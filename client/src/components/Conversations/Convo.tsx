@@ -91,7 +91,16 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
 
         // Add console log to see the result/output
         console.log('OpenAI Messages:', openAIMessages);
-        console.log('Is Loading:', isLoading);
+        const formattedMessages = openAIMessages.map(message => `[${message.role}]: ${message.content}`).join('\n');
+
+    // Copy the formatted messages to the clipboard
+     navigator.clipboard.writeText(formattedMessages)
+        .then(() => {
+            console.log('Messages copied to clipboard');
+        })
+        .catch((error) => {
+            console.error('Failed to copy messages to clipboard:', error);
+        });
 
         setIsPopoverActive(false);
     };
