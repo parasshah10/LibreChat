@@ -44,7 +44,7 @@ const EditMessage = ({
   }, []);
 
 const resubmitMessage = () => {
-  console.log('Resubmit button clicked');
+  // console.log('Resubmit button clicked');
   
   if (message.isCreatedByUser) {
     ask(
