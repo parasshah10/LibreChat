@@ -298,7 +298,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                     context="menu-item"
                 />
                 {!renaming && (
-                    <div className="relative line-clamp-1 max-h-5 flex-1 grow overflow-hidden">{title}</div>
+                    <div className="relative line-clamp-1 max-h-5 flex-1 grow overflow-hidden text-xs">{title}</div>
                 )}
                 {isActiveConvo ? (
                     <div
