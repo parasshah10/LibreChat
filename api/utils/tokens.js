@@ -61,6 +61,9 @@ const openAIModels = {
   'mistral-': 31990, // -10 from max
   llama3: 8187, // -5 from max
   'llama-3': 8187, // -5 from max
+  'knowlee' : 20000,
+  'wizardlm-2-8x22b': 64000,
+  'mixtral-8x22b-v2': 64000,
 };
 
 const cohereModels = {
