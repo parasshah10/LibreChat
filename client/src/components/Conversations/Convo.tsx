@@ -101,7 +101,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
                     'Authorization': `Bearer hi`
                 },
                 body: JSON.stringify({
-                    model: 'command-r-plus',
+                    model: 'gemini-1.5-flash-latest',
                     temperature: 1,
                     messages: [
                         { role: 'system', content: `Generate a concise title (4-7 words maximum) for this conversation (without quotation marks). \n\n${formattedMessages}\n\nTITLE: ` }
