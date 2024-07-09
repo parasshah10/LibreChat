@@ -49,7 +49,7 @@ const openAIModels = {
   'gpt-4-1106': 127990, // -10 from max
   'gpt-4-0125': 127990, // -10 from max
   'gpt-4o': 127990, // -10 from max
-  'gpt-4-copilot': 100000,
+  'gpt-4-copilot': 105000,
   'gpt-4-turbo': 127990, // -10 from max
   'gpt-4-vision': 127990, // -10 from max
   'gpt-3.5-turbo': 16375, // -10 from max
